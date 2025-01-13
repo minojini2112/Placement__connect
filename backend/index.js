@@ -57,9 +57,36 @@ app.post("/login",async(req,res)=>{
   }
 });
 
+app.post("/getprofile", async (req, res) => {
+  const data = req.body;
+
+  if (!data.name || !data.department || !data.year || !data.class || !data.register_number || !data.roll_no) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const profiledetails = await prisma.profile.create({
+      data: {
+        name: data.name,
+        department: data.department,
+        year: data.year,
+        class: data.class,
+        register_number: data.register_number,
+        roll_no: data.roll_no,
+        staff_incharge: data.staff_incharge,
+        class_incharge: data.class_incharge,
+        placement_head: data.placement_head
+      },
+    });
+    return res.status(201).json({ message: "Profile created successfully", data: profiledetails });
+  } catch (error) {
+    return res.status(500).json({ message: error.message || "Internal Server Error" });
+  }
+});
 
 
-app.listen(3002, () => {
+
+app.listen(3005, () => {
     console.log("Server is running on port 3002");
   });
   
