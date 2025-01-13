@@ -32,6 +32,31 @@ app.post("/signin",async(req,res)=>{
   }
 })
 
+app.post("/login",async(req,res)=>{
+  const {email,password}= req.body;
+  try{
+    const isUserExists = await prisma.user.findUnique({
+      where:{ email },
+    });
+
+    if(!isUserExists){
+      return res
+      .status(404)
+      .json({ message: "user email not exists.Sign up" });
+    }
+    const passwordmatch = await bcrypt.compare(password, isUserExists.password);
+
+    if (!passwordmatch) {
+      return res.status(401).json({ message: "Invalid user password" });
+    }else{
+       return res.status(201).json({message:"login successfull",data: isUserExists});
+    }
+  }catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+});
+
 app.listen(3002, () => {
     console.log("Server is running on port 3002");
   });
