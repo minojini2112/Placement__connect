@@ -27,3 +27,13 @@ model Profile {
   class_incharge String
   placement_head String
 }
+
+model Participation{
+    id      Int @id @default(autoincrement())
+    user_id Int 
+    competition_name String
+    college String
+    date String
+    certificates String
+    report String
+}
