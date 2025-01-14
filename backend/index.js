@@ -79,17 +79,18 @@ app.post("/login",async(req,res)=>{
 app.post("/getprofile", async (req, res) => {
   const data = req.body;
 
-  if (!data.name || !data.department || !data.year || !data.class || !data.register_number || !data.roll_no) {
+  if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     const profiledetails = await prisma.profile.create({
       data: {
+        user_id: data.user_id,
         name: data.name,
         department: data.department,
         year: data.year,
-        class: data.class,
+        section: data.section,
         register_number: data.register_number,
         roll_no: data.roll_no,
         staff_incharge: data.staff_incharge,
@@ -105,6 +106,7 @@ app.post("/getprofile", async (req, res) => {
 
 app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'pdf', maxCount: 1 }]), async (req,res)=>{
     const data =  req.body;
+    console.log(req.files);
 
     try{
         if (!data.user_id || !data.competition_name || !data.college || !data.date){
@@ -115,14 +117,13 @@ app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name
           ? req.files['image'].map(file => file.path).join(', ') 
           : '';
         const pdfUrl = req.files['pdf'] ? req.files['pdf'][0].path : null; 
-        const formattedDate = new Date(data.date).toISOString(); 
         
         const participation = await prisma.participation.create({
             data:{
-                user_id : data.user_id,
+              user_id: parseInt(data.user_id), 
                 competition_name: data.competition_name,
                 college:data.college,
-                date : formattedDate,
+                date : data.date,
                 certificates : imageUrls,
                 report : pdfUrl
             },
