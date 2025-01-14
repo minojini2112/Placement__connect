@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 const app= express()
 app.use(express.json());
 
-var prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 app.post("/signin",async(req,res)=>{
   const {email , password, role}= req.body;
@@ -86,7 +86,7 @@ app.post("/getprofile", async (req, res) => {
 
 
 
-app.listen(3005, () => {
+app.listen(3006, () => {
     console.log("Server is running on port 3002");
   });
   
