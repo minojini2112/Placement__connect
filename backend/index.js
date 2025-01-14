@@ -1,11 +1,34 @@
 const express = require("express")
 const {PrismaClient} = require("@prisma/client")
 const bcrypt = require("bcrypt")
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+cloudinary.config({
+    cloud_name: 'ds65kgmhq',
+    api_key: '614127347772552',
+    api_secret: 'xAG6lDg6nUKIhJAS9BXuKqPq2tA',
+  });
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'hackathons', 
+      resource_type: 'auto', 
+    },
+  });
 
 const app= express()
-app.use(express.json());
+
 
 const prisma = new PrismaClient();
+
+const upload = multer({ storage });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 app.post("/signin",async(req,res)=>{
   const {email , password, role}= req.body;
@@ -84,9 +107,38 @@ app.post("/getprofile", async (req, res) => {
   }
 });
 
+app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'pdf', maxCount: 1 }]), async (req,res)=>{
+    const data =  req.body;
+
+    try{
+        if (!data.user_id || !data.competition_name || !data.college || !data.date){
+            return res.status(400).json({message:"All Fields are required"});
+        }
+        
+        const imageUrls = req.files['image'] 
+          ? req.files['image'].map(file => file.path).join(', ') 
+          : '';
+        const pdfUrl = req.files['pdf'] ? req.files['pdf'][0].path : null; 
+        const formattedDate = new Date(data.date).toISOString(); 
+        
+        const participation = await prisma.participation.create({
+            data:{
+                user_id : data.user_id,
+                competition_name: data.competition_name,
+                college:data.college,
+                date : formattedDate,
+                certificates : imageUrls,
+                report : pdfUrl
+            },
+        });
+        return res.status(201).json({message:"Participation details successfully stored", data:participation});
+    } catch(error){
+        return res.status(500).json({message:error})
+    }
+});
 
 
 app.listen(3006, () => {
-    console.log("Server is running on port 3002");
+    console.log("Server is running on port 3006");
   });
   
