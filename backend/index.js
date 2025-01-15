@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt")
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cors = require("cors");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -19,6 +20,13 @@ const storage = new CloudinaryStorage({
   },
 });
 
+const corsOptions = {
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type'], 
+};
+
+app.use(cors(corsOptions)); 
 const app = express()
 const prisma = new PrismaClient();
 
