@@ -15,7 +15,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'hackathons',
-    resource_type: 'auto',
+    resource_type: 'raw',
   },
 });
 
@@ -115,7 +115,7 @@ app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name
     const imageUrls = req.files['image']
       ? req.files['image'].map(file => file.path).join(', ')
       : '';
-    const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
+      const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
 
     const participation = await prisma.participation.create({
       data: {
