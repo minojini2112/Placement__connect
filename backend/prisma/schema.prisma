@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  shadowDatabaseUrl = "postgresql://neondb_owner:2GhDjNMf0Hxs@localhost:5432/shadow_db"
 }
 
 model User {
@@ -26,6 +27,8 @@ model Profile {
   staff_incharge String
   class_incharge String
   placement_head String
+  batch String? 
+  image String?
 }
 
 model Participation{
@@ -34,6 +37,7 @@ model Participation{
     competition_name String
     college String
     date String
+    year String
     certificates String
     report String
 }

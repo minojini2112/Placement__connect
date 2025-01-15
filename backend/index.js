@@ -19,9 +19,19 @@ const storage = new CloudinaryStorage({
   },
 });
 
+const profileStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params:{
+    folder:'profile',
+    resource_type:'auto',
+  },
+})
+
 const app = express()
 const prisma = new PrismaClient();
+
 const upload = multer({ storage });
+const storageUpload = multer({profileStorage});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -78,7 +88,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/profile", async (req, res) => {
+app.post("/profile", storageUpload.single('image'), async (req, res) => {
   const data = req.body;
 
   if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
@@ -86,6 +96,8 @@ app.post("/profile", async (req, res) => {
   }
 
   try {
+    const imageUrl = req.file.path;
+
     const profiledetails = await prisma.profile.create({
       data: {
         user_id: data.user_id,
@@ -97,7 +109,9 @@ app.post("/profile", async (req, res) => {
         roll_no: data.roll_no,
         staff_incharge: data.staff_incharge,
         class_incharge: data.class_incharge,
-        placement_head: data.placement_head
+        placement_head: data.placement_head,
+        batch: data.batch,
+        image: imageUrl
       },
     });
     return res.status(201).json({ message: "Profile created successfully", data: profiledetails });
@@ -140,6 +154,7 @@ app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name
     const imageUrls = req.files['image']
       ? req.files['image'].map(file => file.path).join(', ')
       : '';
+
     const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
 
     const profileData = await prisma.profile.findUnique({
