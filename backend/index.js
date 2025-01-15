@@ -20,17 +20,19 @@ const storage = new CloudinaryStorage({
 });
 
 const app = express()
-var prisma = new PrismaClient();
+const prisma = new PrismaClient();
 const upload = multer({ storage });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.post("/signin", async (req, res) => {
   const { email, password, role } = req.body;
   try {
     const isuserexist = await prisma.user.findUnique({
       where: {
+
         email: email
       },
     })
@@ -76,7 +78,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/getprofile", async (req, res) => {
+app.post("/profile", async (req, res) => {
   const data = req.body;
 
   if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
@@ -103,6 +105,29 @@ app.post("/getprofile", async (req, res) => {
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 });
+
+app.get("/getprofile/:user_id", async (req, res) => {
+  const { user_id } = req.params;
+
+
+  try {
+    const profileData = await prisma.profile.findMany({
+      where: {
+        user_id: parseInt(user_id),
+      },
+    });
+
+    if (!profileData) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
+    return res.status(200).json({ message: "Data retrieved successfully", data: profileData });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name: 'pdf', maxCount: 1 }]), async (req, res) => {
   const data = req.body;
@@ -150,6 +175,8 @@ app.get("/getparticipation/:user_id",async (req,res)=>{
   
 });
 
+
 app.listen(3005, () => {
   console.log("Server is running on port 3005");
 });
+
