@@ -34,11 +34,11 @@ const Router = createBrowserRouter([
                 element:<Participation/>,
             },
             {
-                path:"notifications",
+                path:"/notifications",
                 element:<Notification/>,
             }
         ]
-    }
+    },
 ]);
 
 const root= ReactDOM.createRoot(document.getElementById("root"));
