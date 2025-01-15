@@ -140,19 +140,33 @@ app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name
     const imageUrls = req.files['image']
       ? req.files['image'].map(file => file.path).join(', ')
       : '';
-      const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
+    const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
 
-    const participation = await prisma.participation.create({
-      data: {
+    const profileData = await prisma.profile.findUnique({
+      where:{
         user_id: parseInt(data.user_id),
-        competition_name: data.competition_name,
-        college: data.college,
-        date: data.date,
-        certificates: imageUrls,
-        report: pdfUrl
-      },
-    });
-    return res.status(201).json({ message: "Participation details successfully stored", data: participation });
+        }
+    })
+
+    if (profileData){
+      console.log(profileData)
+
+      const participation = await prisma.participation.create({
+        data: {
+          user_id: parseInt(data.user_id),
+          competition_name: data.competition_name,
+          college: data.college,
+          date: data.date,
+          certificates: imageUrls,
+          report: pdfUrl,
+          year: profileData.year,
+        },
+      });
+      return res.status(201).json({ message: "Participation details successfully stored", data: participation });
+    } else{
+      return res.status(400).json({message:"Profile data not found"});
+    }
+    
   } catch (error) {
     return res.status(500).json({ message: error });
   }
