@@ -19,10 +19,6 @@ const storage = new CloudinaryStorage({
   },
 });
 
-
-
-
-
 const app = express()
 const prisma = new PrismaClient();
 const upload = multer({ storage });
