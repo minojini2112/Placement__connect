@@ -26,9 +26,9 @@ const corsOptions = {
   allowedHeaders: ['Content-Type'], 
 };
 
-app.use(cors(corsOptions)); 
 const app = express()
 const prisma = new PrismaClient();
+app.use(cors(corsOptions)); 
 
 const upload = multer({ storage });
 
