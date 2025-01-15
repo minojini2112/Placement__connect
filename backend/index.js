@@ -96,26 +96,28 @@ app.post("/profile", storageUpload.single('image'), async (req, res) => {
   }
 
   try {
-    const imageUrl = req.file.path;
+    const imageUrl = req.file?.path || null;
 
     const profiledetails = await prisma.profile.create({
       data: {
-        user_id: parseInt(data.user_id),
+        user_id: parseInt(data.user_id, 10),
         name: data.name,
         department: data.department,
         year: data.year,
         section: data.section,
         register_number: data.register_number,
         roll_no: data.roll_no,
-        staff_incharge: data.staff_incharge,
-        class_incharge: data.class_incharge,
-        placement_head: data.placement_head,
-        batch: data.batch,
-        image: imageUrl
+        staff_incharge: data.staff_incharge || null,
+        class_incharge: data.class_incharge || null,
+        placement_head: data.placement_head || null,
+        batch: data.batch || null, 
+        image: imageUrl 
       },
     });
+
     return res.status(201).json({ message: "Profile created successfully", data: profiledetails });
   } catch (error) {
+    console.error("Error creating profile:", error);
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 });
