@@ -113,7 +113,7 @@ app.post("/profile", storageUpload.single('image'), async (req, res) => {
         class_incharge: data.class_incharge || null,
         placement_head: data.placement_head || null,
         batch: data.batch || null, 
-        image: imageUrl 
+        image: imageUrl || null
       },
     });
 
