@@ -19,19 +19,10 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const profileStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params:{
-    folder:'profile',
-    resource_type:'auto',
-  },
-})
-
 const app = express()
 const prisma = new PrismaClient();
 
 const upload = multer({ storage });
-const storageUpload = multer({profileStorage});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -88,7 +79,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/profile", storageUpload.single('image'), async (req, res) => {
+app.post("/profile", upload.single('image'), async (req, res) => {
   const data = req.body;
 
   if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
