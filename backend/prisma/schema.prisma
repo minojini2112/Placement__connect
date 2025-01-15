@@ -27,7 +27,7 @@ model Profile {
   staff_incharge  String
   class_incharge  String
   placement_head  String
-  batch           String?
+  batch           String
   image           String? @default("null")
 }
 
