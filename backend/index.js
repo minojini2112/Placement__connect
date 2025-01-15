@@ -97,6 +97,8 @@ app.post("/profile", storageUpload.single('image'), async (req, res) => {
 
   try {
     const imageUrl = req.file?.path || null;
+    console.log("Batch:", data.batch);
+    console.log("Image:", imageUrl);
 
     const profiledetails = await prisma.profile.create({
       data: {
