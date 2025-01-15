@@ -9,7 +9,7 @@ generator client {
 
 model User {
   id       Int    @id @default(autoincrement())
-  email    String
+  email    String @unique
   password String
   role     String
 }
@@ -20,7 +20,7 @@ model Profile {
   name String
   department String
   year String
-  class String
+  section String
   register_number String
   roll_no String
   staff_incharge String
