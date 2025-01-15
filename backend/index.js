@@ -100,7 +100,7 @@ app.post("/profile", storageUpload.single('image'), async (req, res) => {
 
     const profiledetails = await prisma.profile.create({
       data: {
-        user_id: data.user_id,
+        user_id: parseInt(data.user_id),
         name: data.name,
         department: data.department,
         year: data.year,
