@@ -4,7 +4,7 @@ const Sidemenu = () => {
   return (
     <div className='bg-[#0e2f44] w-[220px] h-screen p-5 flex flex-col items-center space-y-7 pt-[40px]'>
      
-      <div className='w-[110px] h-[110px] border-4 border-[#039ee3] rounded-full overflow-hidden'>
+      <div className='w-[110px] h-[110px] border-[1px] border-[#039ee3] rounded-full overflow-hidden'>
         <img 
           src='https://ik.imagekit.io/mino2112/css%20driving%20skl/woman.png?updatedAt=1725791888913' 
           alt='Profile'

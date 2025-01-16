@@ -97,7 +97,8 @@ app.post("/profile", async (req, res) => {
         roll_no: data.roll_no,
         staff_incharge: data.staff_incharge,
         class_incharge: data.class_incharge,
-        placement_head: data.placement_head
+        placement_head: data.placement_head , 
+        batch: data.batch
       },
     });
     return res.status(201).json({ message: "Profile created successfully", data: profiledetails });
