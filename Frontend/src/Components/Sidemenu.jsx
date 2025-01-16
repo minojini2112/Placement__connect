@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 
 const Sidemenu = () => {
   return (
@@ -16,11 +16,10 @@ const Sidemenu = () => {
 
       
       <div className='w-full space-y-4 text-lg text-white'>
-        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'>Dashboard</h2>
-        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'>Notifications</h2>
-        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'>Participation</h2>
-        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'>Profile</h2>
-        
+        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'><Link to="/">Dashboard</Link></h2>
+        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'><Link to="/profile">Profile</Link></h2>
+        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'><Link to="/participation">Participation</Link></h2>
+        <h2 className='hover:bg-[#039ee3] hover:text-[#0e2f44] p-2 rounded-md cursor-pointer'><Link to="/notifications">Notifications</Link></h2>
       
         <hr className='border-t-2 border-[#039ee3]' /> 
         

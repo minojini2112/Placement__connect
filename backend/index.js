@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt")
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cors = require("cors");
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -19,8 +20,16 @@ const storage = new CloudinaryStorage({
   },
 });
 
+const corsOptions = {
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type'], 
+};
+
 const app = express()
 const prisma = new PrismaClient();
+app.use(cors(corsOptions)); 
+
 const upload = multer({ storage });
 
 app.use(express.json());
@@ -78,7 +87,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/profile", async (req, res) => {
+app.post("/profile", upload.single('image'), async (req, res) => {
   const data = req.body;
 
   if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
@@ -86,23 +95,30 @@ app.post("/profile", async (req, res) => {
   }
 
   try {
+    const imageUrl = req.file?.path || null;
+    console.log("Batch:", data.batch);
+    console.log("Image:", imageUrl);
+
     const profiledetails = await prisma.profile.create({
       data: {
-        user_id: data.user_id,
+        user_id: parseInt(data.user_id, 10),
         name: data.name,
         department: data.department,
         year: data.year,
         section: data.section,
         register_number: data.register_number,
         roll_no: data.roll_no,
-        staff_incharge: data.staff_incharge,
-        class_incharge: data.class_incharge,
-        placement_head: data.placement_head , 
-        batch: data.batch
+        staff_incharge: data.staff_incharge || null,
+        class_incharge: data.class_incharge || null,
+        placement_head: data.placement_head || null,
+        batch: data.batch || null, 
+        image: imageUrl || null
       },
     });
+
     return res.status(201).json({ message: "Profile created successfully", data: profiledetails });
   } catch (error) {
+    console.error("Error creating profile:", error);
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 });
@@ -141,19 +157,34 @@ app.post("/participation", upload.fields([{ name: 'image', maxCount: 5 }, { name
     const imageUrls = req.files['image']
       ? req.files['image'].map(file => file.path).join(', ')
       : '';
-      const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
 
-    const participation = await prisma.participation.create({
-      data: {
+    const pdfUrl = req.files['pdf'] && req.files['pdf'][0] ? req.files['pdf'][0].path : null;
+
+    const profileData = await prisma.profile.findUnique({
+      where:{
         user_id: parseInt(data.user_id),
-        competition_name: data.competition_name,
-        college: data.college,
-        date: data.date,
-        certificates: imageUrls,
-        report: pdfUrl
-      },
-    });
-    return res.status(201).json({ message: "Participation details successfully stored", data: participation });
+        }
+    })
+
+    if (profileData){
+      console.log(profileData)
+
+      const participation = await prisma.participation.create({
+        data: {
+          user_id: parseInt(data.user_id),
+          competition_name: data.competition_name,
+          college: data.college,
+          date: data.date,
+          certificates: imageUrls,
+          report: pdfUrl,
+          year: profileData.year,
+        },
+      });
+      return res.status(201).json({ message: "Participation details successfully stored", data: participation });
+    } else{
+      return res.status(400).json({message:"Profile data not found"});
+    }
+    
   } catch (error) {
     return res.status(500).json({ message: error });
   }
