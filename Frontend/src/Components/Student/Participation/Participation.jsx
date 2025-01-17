@@ -82,9 +82,6 @@ const handleSubmit = async()=>{
 }
 }
 
-  {
-    loading && <div>Loading details ...</div>;
-  }
 
   return (
     <div className="p-4 space-y-4 w-[80%] ml-[250px]">
@@ -116,7 +113,7 @@ const handleSubmit = async()=>{
           Participation History
         </p>
         <div>
-        <History history={history}/>
+        <History history={history} loading={loading}/>
         </div>
       </div>
     </div>

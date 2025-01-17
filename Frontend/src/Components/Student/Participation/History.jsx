@@ -18,6 +18,9 @@ const History = (props) => {
   };
   return (
     <div className="flex flex-col gap-5 justify-center items-center w-[70%] mx-auto mt-5">
+      {props.loading && 
+      <div className="text-xl font-medium">Loading Participation History...</div>
+      }
       {props.history.map((value) => {
         const urlsArray = value.certificates.split(",");
         console.log(urlsArray);
