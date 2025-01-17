@@ -71,6 +71,7 @@ const handleSubmit = async()=>{
       console.log(resData);
       alert("Particiption Details stored Successfully !");
       setAdd(false);
+      window.location.reload();
      }else{
      console.log("Error storing participation details", resData);
      alert("Unable to store participation details");
