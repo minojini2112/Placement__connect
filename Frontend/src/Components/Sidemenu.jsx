@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Sidemenu = () => {
   return (
-    <div className='bg-[#0e2f44] w-[220px] h-screen p-5 flex flex-col items-center space-y-7 pt-[40px]'>
+    <div className='bg-[#0e2f44] w-[220px] h-screen p-5 flex flex-col items-center space-y-7 pt-[40px] fixed'>
      
       <div className='w-[110px] h-[110px] border-[1px] border-[#039ee3] rounded-full overflow-hidden'>
         <img 
