@@ -87,18 +87,30 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Create Profile Route
 app.post("/profile", upload.single('image'), async (req, res) => {
   const data = req.body;
 
+  // Validate required fields
   if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     const imageUrl = req.file?.path || null;
-    console.log("Batch:", data.batch);
-    console.log("Image:", imageUrl);
 
+    // Check if the profile already exists
+    const existingProfile = await prisma.profile.findFirst({
+      where: {
+        user_id: parseInt(data.user_id, 10),
+      },
+    });
+
+    if (existingProfile) {
+      return res.status(409).json({ message: "Profile already exists" });
+    }
+
+    // Create a new profile
     const profiledetails = await prisma.profile.create({
       data: {
         user_id: parseInt(data.user_id, 10),
@@ -111,8 +123,8 @@ app.post("/profile", upload.single('image'), async (req, res) => {
         staff_incharge: data.staff_incharge || null,
         class_incharge: data.class_incharge || null,
         placement_head: data.placement_head || null,
-        batch: data.batch || null, 
-        image: imageUrl || null
+        batch: data.batch || null,
+        image: imageUrl || null,
       },
     });
 
@@ -123,12 +135,12 @@ app.post("/profile", upload.single('image'), async (req, res) => {
   }
 });
 
+// Get Profile Route
 app.get("/getprofile/:user_id", async (req, res) => {
   const { user_id } = req.params;
 
-
   try {
-    const profileData = await prisma.profile.findMany({
+    const profileData = await prisma.profile.findFirst({
       where: {
         user_id: parseInt(user_id),
       },

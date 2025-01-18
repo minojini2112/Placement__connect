@@ -1,9 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';  // Import PropTypes
 
-
-
-const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
+const EditProfile = ({ userId, profileData, setProfileData, setIsEditing, isEditing }) => {
   const [formData, setFormData] = useState({
     name: '',
     department: '',
@@ -31,38 +29,38 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`https://placement-connect.onrender.com/getprofile/${userId}`, {
+      const response = await fetch(`https://placement-connect.onrender.com/updateprofile/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setProfileData(data);
         setIsEditing(false);
+        alert('Profile updated successfully!');
       } else {
         console.error('Error:', response.statusText);
+        alert('Failed to update profile. Please try again.');
       }
     } catch (error) {
       console.error('Fetch error:', error);
+      alert('An error occurred. Please try again later.');
     }
   };
-  
 
   return (
-    <div className="flex items-center justify-center  bg-gradient-to-br from-white via-[#e6f5fc] to-[#cceef9]">
+    <div className="flex items-center justify-center bg-gradient-to-br from-white via-[#e6f5fc] to-[#cceef9]">
       <form onSubmit={handleSubmit} className="p-8 bg-white rounded-lg shadow-md w-[1000px]">
         <h2 className="mb-6 text-2xl font-bold text-gray-800">
           {isEditing ? 'Edit Profile Details' : 'Enter Profile Details'}
         </h2>
-  
+
         <div className="grid grid-cols-2 gap-6">
-         
           <div>
-            
             <div className="mb-4">
               <input
                 type="text"
@@ -74,8 +72,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 required
               />
             </div>
-  
-            
+
             <div className="mb-4">
               <select
                 name="year"
@@ -91,8 +88,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 <option value="IV Year">IV Year</option>
               </select>
             </div>
-  
-            
+
             <div className="mb-4">
               <select
                 name="department"
@@ -104,20 +100,15 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 <option value="" disabled>Select Department</option>
                 <option value="Mechanical Engineering">Mechanical Engineering</option>
                 <option value="Civil Engineering">Civil Engineering</option>
-                <option value="Electrical and Electronics Engineering">Electrical and Electronics Engineering</option>
+                <option value="EEE">Electrical and Electronics Engineering</option>
                 <option value="Information Technology">Information Technology</option>
-                <option value="Electronics and Communication Engineering">Electronics and Communication Engineering</option>
-                <option value="Computer Science and Engineering">Computer Science and Engineering</option>
-                <option value="Artificial Intelligence and Data Science">Artificial Intelligence and Data Science</option>
-                <option value="Computer Science Engineering (Cyber Security)">Computer Science Engineering (Cyber Security)</option>
-                <option value="Electronics Engineering (VLSI Design and Technology)">Electronics Engineering (VLSI Design and Technology)</option>
-                <option value="MBA-Human Resource (HR)">MBA-Human Resource (HR)</option>
-                <option value="MBA-Finance">MBA-Finance</option>
-                <option value="MBA-Marketing">MBA-Marketing</option>
+                <option value="ECE">Electronics and Communication Engineering</option>
+                <option value="CSE">Computer Science and Engineering</option>
+                <option value="AI & DS">Artificial Intelligence and Data Science</option>
+                <option value="Cyber Security">Cyber Security</option>
               </select>
             </div>
-  
-            
+
             <div className="mb-4">
               <select
                 name="section"
@@ -132,8 +123,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 <option value="C">C</option>
               </select>
             </div>
-  
-          
+
             <div className="mb-4">
               <input
                 type="text"
@@ -146,10 +136,8 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
               />
             </div>
           </div>
-  
-          
+
           <div>
-           
             <div className="mb-4">
               <input
                 type="text"
@@ -161,8 +149,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 required
               />
             </div>
-  
-            
+
             <div className="mb-4">
               <input
                 type="text"
@@ -174,8 +161,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 required
               />
             </div>
-  
-            
+
             <div className="mb-4">
               <input
                 type="text"
@@ -187,8 +173,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 required
               />
             </div>
-  
-            
+
             <div className="mb-4">
               <input
                 type="text"
@@ -200,8 +185,7 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
                 required
               />
             </div>
-  
-            
+
             <div className="mb-4">
               <input
                 type="text"
@@ -215,14 +199,22 @@ const EditProfile = ({ userId, profileData, setProfileData, setIsEditing }) => {
             </div>
           </div>
         </div>
-  
-        
+
         <button type="submit" className="w-full mt-6 px-4 py-2 bg-[#039ee3] text-white rounded-md">
           {isEditing ? 'Update' : 'Submit'}
         </button>
       </form>
     </div>
   );
+};
+
+// PropTypes validation
+EditProfile.propTypes = {
+  userId: PropTypes.string.isRequired,
+  profileData: PropTypes.object.isRequired,
+  setProfileData: PropTypes.func.isRequired,
+  setIsEditing: PropTypes.func.isRequired,
+  isEditing: PropTypes.bool.isRequired,
 };
 
 export default EditProfile;
