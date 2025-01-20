@@ -88,32 +88,32 @@ app.post("/login", async (req, res) => {
 });
 
 // Create Profile Route
-app.post("/profile", upload.single('image'), async (req, res) => {
+app.post("/profile/:user_id", upload.single('image'), async (req, res) => {
+  const { user_id } = req.params;
   const data = req.body;
 
-  // Validate required fields
-  if (!data.user_id || !data.name || !data.department || !data.year || !data.section || !data.register_number || !data.roll_no) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
   try {
-    const imageUrl = req.file?.path || null;
+    const imageUrl = req.file?.path || data.image; // Use existing image if no new file
 
-    // Check if the profile already exists
-    const existingProfile = await prisma.profile.findFirst({
+    const updatedProfile = await prisma.profile.upsert({
       where: {
-        user_id: parseInt(data.user_id, 10),
+        user_id: parseInt(user_id, 10),
       },
-    });
-
-    if (existingProfile) {
-      return res.status(409).json({ message: "Profile already exists" });
-    }
-
-    // Create a new profile
-    const profiledetails = await prisma.profile.create({
-      data: {
-        user_id: parseInt(data.user_id, 10),
+      update: {
+        name: data.name,
+        department: data.department,
+        year: data.year,
+        section: data.section,
+        register_number: data.register_number,
+        roll_no: data.roll_no,
+        staff_incharge: data.staff_incharge || null,
+        class_incharge: data.class_incharge || null,
+        placement_head: data.placement_head || null,
+        batch: data.batch || null,
+        image: imageUrl || null,
+      },
+      create: {
+        user_id: parseInt(user_id, 10),
         name: data.name,
         department: data.department,
         year: data.year,
@@ -128,9 +128,9 @@ app.post("/profile", upload.single('image'), async (req, res) => {
       },
     });
 
-    return res.status(201).json({ message: "Profile created successfully", data: profiledetails });
+    return res.status(200).json(updatedProfile);
   } catch (error) {
-    console.error("Error creating profile:", error);
+    console.error("Error updating profile:", error);
     return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 });
