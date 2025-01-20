@@ -147,7 +147,7 @@ app.get("/getprofile/:user_id", async (req, res) => {
     });
 
     if (!profileData) {
-      return res.status(404).json({ message: "Profile not found" });
+      return res.status(200).json({ message: "Profile not found"});
     }
 
     return res.status(200).json({ message: "Data retrieved successfully", data: profileData });
