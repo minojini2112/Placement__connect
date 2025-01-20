@@ -97,7 +97,7 @@ app.post("/profile/:user_id", upload.single('image'), async (req, res) => {
 
     const updatedProfile = await prisma.profile.upsert({
       where: {
-        user_id: parseInt(user_id, 10),
+        user_id: parseInt(user_id),
       },
       update: {
         name: data.name,
@@ -113,7 +113,7 @@ app.post("/profile/:user_id", upload.single('image'), async (req, res) => {
         image: imageUrl || null,
       },
       create: {
-        user_id: parseInt(user_id, 10),
+        user_id: parseInt(user_id),
         name: data.name,
         department: data.department,
         year: data.year,
