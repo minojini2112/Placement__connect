@@ -93,13 +93,13 @@ app.post("/profile/:user_id", upload.single('image'), async (req, res) => {
   const data = req.body;
 
   try {
+   const imageUrl = req.file?.path || data.image; // Use existing image if no new file
    const profileExists = await prisma.profile.findUnique({
     where:{
       user_id: parseInt(user_id),
     }
    })
    if (profileExists){
-    const imageUrl = req.file?.path || data.image; // Use existing image if no new file
       const updateProfile =  await prisma.profile.update({
         where:{
           user_id: parseInt(user_id),
