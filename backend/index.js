@@ -131,7 +131,7 @@ console.log("Body:", req.body);
       },
     });
 
-    return res.status(200).json(updatedProfile);
+    return res.status(200).json({message:"profile details added",data:updatedProfile});
   } catch (error) {
     console.error("Error updating profile:", error);
     return res.status(500).json({ message: error.message || "Internal Server Error" });
