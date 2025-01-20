@@ -91,18 +91,20 @@ app.post("/login", async (req, res) => {
 app.post("/profile/:user_id", upload.single('image'), async (req, res) => {
   const { user_id } = req.params;
   const data = req.body;
-  console.log("Params:", req.params);
-console.log("Body:", req.body);
-  console.log("File:", req.file);
 
   try {
+   const profileExists = await prisma.profile.findUnique({
+    where:{
+      user_id: parseInt(user_id),
+    }
+   })
+   if (profileExists){
     const imageUrl = req.file?.path || data.image; // Use existing image if no new file
-
-    const updatedProfile = await prisma.profile.upsert({
-      where: {
-        user_id: parseInt(user_id),
-      },
-      update: {
+      const updateProfile =  await prisma.profile.update({
+        where:{
+          user_id: parseInt(user_id),
+        },
+        data:{
         name: data.name,
         department: data.department,
         year: data.year,
@@ -114,9 +116,13 @@ console.log("Body:", req.body);
         placement_head: data.placement_head || null,
         batch: data.batch || null,
         image: imageUrl || null,
-      },
-      create: {
-        user_id: parseInt(user_id),
+        },
+      })
+      return res.status(200).json({message:"Profile Updated Successfully",data:updateProfile});
+   }else{
+      const newProfile = await prisma.profile.create({
+        data:{
+          user_id: parseInt(user_id),
         name: data.name,
         department: data.department,
         year: data.year,
@@ -128,10 +134,10 @@ console.log("Body:", req.body);
         placement_head: data.placement_head || null,
         batch: data.batch || null,
         image: imageUrl || null,
-      },
-    });
-
-    return res.status(200).json({message:"profile details added",data:updatedProfile});
+        },
+      })
+      return res.status(200).json({message:"Profile created successfully",data:newProfile})
+   }
   } catch (error) {
     console.error("Error updating profile:", error);
     return res.status(500).json({ message: error.message || "Internal Server Error" });
